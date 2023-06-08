@@ -1,0 +1,12 @@
+.hover_styles{
+   transform: scale(1.2   );
+   margin-left: 20px;
+   font-size: larger;
+   color: blue;
+   transition: 1s ease-in-out;
+   cursor: pointer;
+}
+
+*{
+    font-family: Arial, Helvetica, sans-serif
+}

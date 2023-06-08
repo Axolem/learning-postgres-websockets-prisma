@@ -6,15 +6,12 @@ const { Server } = require('socket.io');
 
 const app = express();
 
-app.use(cors(), express.json(), express.urlencoded({ extended: true }));
+app.use(cors(), express.json());
 
 
 const authRouter = require('./src/routes/auth');
 
 app.use('/api/auth', authRouter);
-
-
-
 
 
 const server = http.createServer(app);

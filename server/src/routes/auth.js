@@ -37,7 +37,7 @@ router.post('/authenticate',
         //Compare password
         const validPassword = await comparePassword(password, user.password);
 
-        if (!validPassword) return res.status(404).send({ error: 'Invalid password' });
+        if (!validPassword) return res.status(401).send({ error: 'Invalid password' });
 
         //Delete password from user object
         delete user.password;

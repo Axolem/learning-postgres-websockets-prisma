@@ -1,72 +1,132 @@
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { Link } from "preact-router/match";
+import { classNames } from "primereact/utils";
+import { useAuth } from "../utils/AuthContext";
+import { useEffect, useState } from "preact/hooks";
+import { Controller, useForm } from "react-hook-form";
 
 import { Card } from "primereact/card";
-import { useEffect, useState } from "preact/hooks";
-import { useAuth } from "../utils/AuthContext";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { Password } from "primereact/password";
+import { InputText } from "primereact/inputtext";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [ loading, setLoading ] = useState(false);
-
   const { login, doUserAuth } = useAuth();
 
-  const handleLogin =async () => {
-    setLoading(true);
-    // null check
-    if (!username || !password) {
-        setLoading(false);
-      return;
-    }
-
-    // login
-     login(username, password);
-    setLoading(false);
-  };
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // redirect to home if already logged in
     doUserAuth();
   }, []);
 
+  const defaultValues = { username: "", password: "" };
+  const form = useForm({ defaultValues });
+  const errors = form.formState.errors;
+
+  const onSubmit = (data) => {
+    setLoading(true);
+    login(data.username, data.password);
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    form.reset();
+  };
+
+  const getFormErrorMessage = (name) => {
+    return errors[name] ? (
+      <small className="p-error">{errors[name].message}</small>
+    ) : (
+      <small className="p-error">&nbsp;</small>
+    );
+  };
+
   return (
-    <div className="login-page">
-      <Card title="Login">
-        <img src="path_to_image" alt="Logo" className="logo-image" />
-
-        <div className="flex flex-column gap-2">
-          <label htmlFor="username">Username:</label>
-          <InputText
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            id="username"
-            aria-describedby="username-help"
-            type="text"
-            autoComplete="user-name"
+    <div className="card flex justify-content-center">
+      <Card title="Login" className="w-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-column gap-2"
+        >
+          <Controller
+            name="username"
+            control={form.control}
+            rules={{ required: "Username is required." }}
+            render={({ field, fieldState }) => (
+              <>
+                <label
+                  htmlFor={field.name}
+                  className={classNames({ "p-error": errors.value })}
+                >
+                  Username
+                </label>
+                <InputText
+                  id={field.name}
+                  {...field}
+                  inputRef={field.ref}
+                  className={classNames({ "p-invalid": fieldState.error })}
+                />
+                {getFormErrorMessage(field.name)}
+              </>
+            )}
           />
-          <small id="username-help">Enter your username to pocced.</small>
-        </div>
-        <div className="flex flex-column gap-2">
-          <label htmlFor="password">Password:</label>
-          <InputText
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            id="password"
-            aria-describedby="password-help"
-            type="password"
-            autoComplete="current-password"
+          <Controller
+            name="password"
+            control={form.control}
+            rules={{ required: "Password is required." }}
+            render={({ field, fieldState }) => (
+              <>
+                <label
+                  htmlFor={field.name}
+                  className={classNames({ "p-error": errors.value })}
+                >
+                  Password
+                </label>
+                <Password
+                  id={field.name}
+                  {...field}
+                  inputRef={field.ref}
+                  className={classNames({ "p-invalid": fieldState.error })}
+                  feedback={false}
+                  header={header}
+                  footer={footer}
+                />
+                {getFormErrorMessage(field.name)}
+              </>
+            )}
           />
-          <small id="password-help">Enter your correct password.</small>
+          <Button
+            label="Submit"
+            type="submit"
+            icon="pi pi-check"
+            loading={loading}
+          />
+        </form>
+
+        <div className="p-text-center">
+          <Link href="/signup" className="">
+            Sign up
+          </Link>
         </div>
-
-        <Button label="Proced" rounded onClick={handleLogin} loading={loading}/>
-
-        <Link href="/signup">Signup</Link>
       </Card>
     </div>
   );
 };
 
 export default Login;
+
+const header = <div className="font-bold mb-3">Pick a password</div>;
+const footer = (
+  <>
+    <Divider />
+    <p className="mt-2">Suggestions</p>
+    <ul className="pl-2 ml-2 mt-0 line-height-3">
+      <li>At least one lowercase</li>
+      <li>At least one uppercase</li>
+      <li>At least one numeric</li>
+      <li>Minimum 8 characters</li>
+    </ul>
+  </>
+);

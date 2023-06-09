@@ -1,10 +1,13 @@
 import { useEffect, useState } from "preact/hooks";
 
 import io from "socket.io-client";
+import { useAuth } from "../utils/AuthContext";
 
 const socket = io("http://localhost:3001");
 
 const Home = () => {
+
+  const {logout} = useAuth();
 
     const [text, setText] = useState("");
 
@@ -23,7 +26,7 @@ const Home = () => {
     };
     return (
         <div>
-            <h1>Home</h1>
+            <h1 onClick={logout}>Home</h1>
         </div>
     );
 }

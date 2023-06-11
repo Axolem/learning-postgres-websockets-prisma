@@ -4,7 +4,7 @@ import { useRouter } from "preact-router";
 import { useContext, useRef, useState } from 'preact/hooks';
 
 // Create the authentication context
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 // Create a custom hook to access the authentication context
 export const useAuth = () => useContext(AuthContext);

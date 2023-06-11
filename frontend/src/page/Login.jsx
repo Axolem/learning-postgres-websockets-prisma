@@ -15,11 +15,6 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // redirect to home if already logged in
-    doUserAuth();
-  }, []);
-
   const defaultValues = { username: "", password: "" };
   const form = useForm({ defaultValues });
   const errors = form.formState.errors;
@@ -43,6 +38,11 @@ const Login = () => {
     );
   };
 
+  useEffect(() => {
+    // redirect to home if already logged in
+    doUserAuth();
+  }, []);
+  
   return (
     <div className="card flex justify-content-center">
       <Card title="Login" className="w-4">
